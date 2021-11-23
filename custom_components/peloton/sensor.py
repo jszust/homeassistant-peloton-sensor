@@ -78,14 +78,14 @@ class PelotonSensor(Entity):
         """Fetch new state data for the sensor."""
 
     conn = pylotoncycle.PylotonCycle(self.user, self.password)
-    workouts = conn.GetRecentWorkouts(2)
-    workout_1 = workouts[0]
-    w_id_1 = workout_1["id"]
-    stats_1 = conn.GetWorkoutMetricsById(w_id_1)
+    workouts = conn.GetRecentWorkouts(1)
+    workout = workouts[0]
+    w_id = workout["id"]
+    stats = conn.GetWorkoutMetricsById(w_id)
 
-    if (workout_1["status"]== 'COMPLETE'):
+    if (workout["status"]== 'COMPLETE'):
         self._state = 'Complete'
-    elif (workout_1["status"]== 'IN_PROGRESS'):
+    elif (workout["status"]== 'IN_PROGRESS'):
         self._state = 'Active'
      
     else:
@@ -93,40 +93,40 @@ class PelotonSensor(Entity):
 
     # Attempting to handle errors in case the API changes
     try:
-        self._attributes.update({"Workout Type":str(workout_1["fitness_discipline"])})
-        self._attributes.update({"Ride Title":str(workout_1["ride"]["title"])})
-        self._attributes.update({"Description":str(workout_1["ride"]["description"])})
-        self._attributes.update({"Start Time":str(workout_1["start_time"])})
-        self._attributes.update({"End Time":str(workout_1["end_time"])})
-        self._attributes.update({"Duration Min":str((workout_1["ride"]["duration"])//60)})
-        self._attributes.update({"Leaderboard Rank":str(workout_1["leaderboard_rank"])})
-        self._attributes.update({"Leaderboard Users":str(workout_1["total_leaderboard_users"])})
-        self._attributes.update({"Output Kj":str((workout_1["total_work"]//1000)+(workout_1["total_work"]%1000>0))})
-        self._attributes.update({"Distance Mi":str(stats_1["summaries"][1]["value"])})
-        self._attributes.update({"Calories KCal":str(int(stats_1["summaries"][2]["value"]))})
-        self._attributes.update({"Heart Rate Average Bpm":str(stats_1["metrics"][4]["average_value"])})
-        self._attributes.update({"Heart Rate Max Bpm":str(stats_1["metrics"][4]["max_value"])})
-        self._attributes.update({"Resistance Average %":str(stats_1["metrics"][2]["average_value"])})
-        self._attributes.update({"Resistance Max %":str(stats_1["metrics"][2]["max_value"])})
-        self._attributes.update({"Speed Average Mph":str(stats_1["metrics"][3]["average_value"])})
-        self._attributes.update({"Speed Max Mph":str(stats_1["metrics"][3]["max_value"])})
-        self._attributes.update({"Speed Average Kph":str(round(((stats_1["metrics"][3]["average_value"])*1.60934),2))})
-        self._attributes.update({"Speed Max Kph":str(round(((stats_1["metrics"][3]["max_value"])*1.60934),2))})
-        self._attributes.update({"Cadence Average Rpm":str(stats_1["metrics"][1]["average_value"])})
-        self._attributes.update({"Cadence Max Rpm":str(stats_1["metrics"][1]["max_value"])})
-        self._attributes.update({"Power Average W":str(stats_1["metrics"][0]["average_value"])})
-        self._attributes.update({"Power Max W":str(stats_1["metrics"][0]["max_value"])})
-        self._attributes.update({"Total Work":str(workout_1["overall_summary"]["total_work"])})
-        self._attributes.update({"Instructor":str(workout_1["instructor_name"])})
-        self._attributes.update({"Workout Image":str(workout_1["ride"]["image_url"])})
+        self._attributes.update({"Workout Type":str(workout["fitness_discipline"])})
+        self._attributes.update({"Ride Title":str(workout["ride"]["title"])})
+        self._attributes.update({"Description":str(workout["ride"]["description"])})
+        self._attributes.update({"Start Time":str(workout["start_time"])})
+        self._attributes.update({"End Time":str(workout["end_time"])})
+        self._attributes.update({"Duration Min":str((workout["ride"]["duration"])//60)})
+        self._attributes.update({"Leaderboard Rank":str(workout["leaderboard_rank"])})
+        self._attributes.update({"Leaderboard Users":str(workout["total_leaderboard_users"])})
+        self._attributes.update({"Output Kj":str((workout["total_work"]//1000)+(workout["total_work"]%1000>0))})
+        self._attributes.update({"Distance Mi":str(stats["summaries"][1]["value"])})
+        self._attributes.update({"Calories KCal":str(int(stats["summaries"][2]["value"]))})
+        self._attributes.update({"Heart Rate Average Bpm":str(stats["metrics"][4]["average_value"])})
+        self._attributes.update({"Heart Rate Max Bpm":str(stats["metrics"][4]["max_value"])})
+        self._attributes.update({"Resistance Average %":str(stats["metrics"][2]["average_value"])})
+        self._attributes.update({"Resistance Max %":str(stats["metrics"][2]["max_value"])})
+        self._attributes.update({"Speed Average Mph":str(stats["metrics"][3]["average_value"])})
+        self._attributes.update({"Speed Max Mph":str(stats["metrics"][3]["max_value"])})
+        self._attributes.update({"Speed Average Kph":str(round(((stats["metrics"][3]["average_value"])*1.60934),2))})
+        self._attributes.update({"Speed Max Kph":str(round(((stats["metrics"][3]["max_value"])*1.60934),2))})
+        self._attributes.update({"Cadence Average Rpm":str(stats["metrics"][1]["average_value"])})
+        self._attributes.update({"Cadence Max Rpm":str(stats["metrics"][1]["max_value"])})
+        self._attributes.update({"Power Average W":str(stats["metrics"][0]["average_value"])})
+        self._attributes.update({"Power Max W":str(stats["metrics"][0]["max_value"])})
+        self._attributes.update({"Total Work":str(workout["overall_summary"]["total_work"])})
+        self._attributes.update({"Instructor":str(workout["instructor_name"])})
+        self._attributes.update({"Workout Image":str(workout["ride"]["image_url"])})
         #
         # #Current metrics
         #
-        self._attributes.update({"Heart Rate Bpm":str(stats_1["metrics"][4]["average_value"])})
-        self._attributes.update({"Resistance %":str(stats_1["metrics"][2]["average_value"])})
-        self._attributes.update({"Speed Mph":str(workout_1["overall_summary"]["speed"])})
-        self._attributes.update({"Speed Kph":str(round(((workout_1["overall_summary"]["speed"])*1.60934),2))})
-        self._attributes.update({"Cadence Rpm":str(workout_1["overall_summary"]["cadence"])})
-        self._attributes.update({"Power W":str(workout_1["overall_summary"]["power"])})
+        self._attributes.update({"Heart Rate Bpm":str(stats["metrics"][4]["average_value"])})
+        self._attributes.update({"Resistance %":str(stats["metrics"][2]["average_value"])})
+        self._attributes.update({"Speed Mph":str(workout["overall_summary"]["speed"])})
+        self._attributes.update({"Speed Kph":str(round(((workout["overall_summary"]["speed"])*1.60934),2))})
+        self._attributes.update({"Cadence Rpm":str(workout["overall_summary"]["cadence"])})
+        self._attributes.update({"Power W":str(workout["overall_summary"]["power"])})
     except:
         print("Error - Check to make sure the API hasn't changed")
